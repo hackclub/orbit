@@ -2,6 +2,7 @@ package datastore
 
 import (
 	"log"
+	"os"
 	"sync"
 
 	"github.com/jmoiron/modl"
@@ -18,9 +19,9 @@ var connectOnce sync.Once
 func Connect() {
 	connectOnce.Do(func() {
 		var err error
-		DB.Dbx, err = sqlx.Open("postgres", "")
+		DB.Dbx, err = sqlx.Connect("postgres", os.Getenv("DATABASE_URL"))
 		if err != nil {
-			log.Fatal("Error connecting to PostgreSQL database (using PG* environment variables): ", err)
+			log.Fatal("Error connecting to PostgreSQL database (using DATABASE_URL environment variable): ", err)
 		}
 		DB.Db = DB.Dbx.DB
 	})
