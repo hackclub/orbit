@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/zachlatta/orbit/server/api"
-	"github.com/zachlatta/orbit/server/datastore"
-	"github.com/zachlatta/orbit/server/git"
+	"github.com/zachlatta/orbit/api"
+	"github.com/zachlatta/orbit/datastore"
+	"github.com/zachlatta/orbit/git"
 )
 
 func init() {
 	flag.Usage = func() {
-		fmt.Fprintln(os.Stderr, `orbit is a development environment server in the cloud.
+		fmt.Fprintln(os.Stderr, `orbit-server is orbit's server compontent.
 
 Usage:
 
@@ -26,7 +26,7 @@ The commands are:
 			fmt.Fprintf(os.Stderr, "    %-24s %s\n", c.name, c.description)
 		}
 		fmt.Fprintln(os.Stderr, `
-Use "orbit command -h" for more information about a command.
+Use "orbit-server command -h" for more information about a command.
 `)
 		os.Exit(1)
 	}
@@ -49,7 +49,7 @@ func main() {
 	}
 
 	fmt.Fprintf(os.Stderr, "unknown subcmd %q\n", subcmd)
-	fmt.Fprintln(os.Stderr, `Run "orbit -h" for usage.`)
+	fmt.Fprintln(os.Stderr, `Run "orbit-server -h" for usage.`)
 	os.Exit(1)
 }
 
@@ -70,7 +70,7 @@ func serveCmd(args []string) {
 	gitProjectsRoot := fs.String("git-root", "/tmp", "git projects root")
 	gitBin := fs.String("git-bin", "/usr/bin/git", "path to git binary")
 	fs.Usage = func() {
-		fmt.Fprintln(os.Stderr, `usage: orbit serve [options]
+		fmt.Fprintln(os.Stderr, `usage: orbit-server serve [options]
 
 Starts the web server that serves the API.
 
@@ -109,7 +109,7 @@ func createDBCmd(args []string) {
 	fs := flag.NewFlagSet("createdb", flag.ExitOnError)
 	drop := fs.Bool("drop", false, "drop DB before creating")
 	fs.Usage = func() {
-		fmt.Fprintln(os.Stderr, `usage: orbit createdb [options]
+		fmt.Fprintln(os.Stderr, `usage: orbit-server createdb [options]
 
 Creates the necessary DB tables and indexes.
 
