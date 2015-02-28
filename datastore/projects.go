@@ -1,6 +1,8 @@
 package datastore
 
 import (
+	"database/sql"
+
 	"github.com/zachlatta/orbit"
 )
 
@@ -11,14 +13,14 @@ func init() {
 type projectsStore struct{ *Datastore }
 
 func (s *projectsStore) Get(id int) (*orbit.Project, error) {
-	var project *orbit.Project
+	var project orbit.Project
 	if err := s.dbh.SelectOne(&project, `SELECT * FROM project WHERE id=$1`, id); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, orbit.ErrProjectNotFound
+		}
 		return nil, err
 	}
-	if project == nil {
-		return nil, orbit.ErrProjectNotFound
-	}
-	return project, nil
+	return &project, nil
 }
 
 func (s *projectsStore) Create(project *orbit.Project) error {
