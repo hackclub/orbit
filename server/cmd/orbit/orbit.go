@@ -7,9 +7,9 @@ import (
 	"net/http"
 	"os"
 
-	"sourcegraph.com/sourcegraph/thesrc/api"
-
+	"github.com/zachlatta/orbit/server/api"
 	"github.com/zachlatta/orbit/server/datastore"
+	"github.com/zachlatta/orbit/server/git"
 )
 
 func init() {
@@ -18,7 +18,7 @@ func init() {
 
 Usage:
 
-	orbit [options] command [arg...]
+    orbit [options] command [arg...]
 
 The commands are:
 `)
@@ -87,6 +87,7 @@ The options are:
 
 	m := http.NewServeMux()
 	m.Handle("/api/", http.StripPrefix("/api", api.Handler()))
+	m.Handle("/git/", http.StripPrefix("/git", git.Handler()))
 
 	log.Print("Listening on ", *httpAddr)
 	err := http.ListenAndServe(*httpAddr, m)
