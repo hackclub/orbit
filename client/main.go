@@ -91,7 +91,7 @@ The options are:
 			select {
 			case e := <-watcher.Events:
 				if e.Op&fsnotify.Write == fsnotify.Write {
-					if err := commitEverything(); err != nil {
+					if err := commitAndPushEverything(); err != nil {
 						log.Fatal("error committing changes")
 					}
 				}
@@ -108,12 +108,16 @@ The options are:
 	<-done
 }
 
-func commitEverything() error {
+func commitAndPushEverything() error {
 	if err := exec.Command("git", "add", "-A", ":/").Run(); err != nil {
 		return err
 	}
 
 	if err := exec.Command("git", "commit", "-m", "", "--allow-empty-message", "--allow-empty").Run(); err != nil {
+		return err
+	}
+
+	if err := exec.Command("git", "push").Run(); err != nil {
 		return err
 	}
 
