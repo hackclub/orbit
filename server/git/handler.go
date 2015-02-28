@@ -8,13 +8,6 @@ import (
 	"strings"
 )
 
-var config Config = Config{
-	ProjectRoot: "/tmp",
-	GitBinPath:  "/usr/bin/git",
-	UploadPack:  true,
-	ReceivePack: true,
-}
-
 var services = map[string]Service{
 	"(.*?)/git-upload-pack$":                       Service{"POST", serviceRPC, "upload-pack"},
 	"(.*?)/git-receive-pack$":                      Service{"POST", serviceRPC, "receive-pack"},

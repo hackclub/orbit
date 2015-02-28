@@ -67,6 +67,8 @@ var subcmds = []subcmd{
 func serveCmd(args []string) {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
 	httpAddr := fs.String("http", ":5000", "HTTP service address")
+	gitProjectsRoot := fs.String("git-root", "/tmp", "git projects root")
+	gitBin := fs.String("git-bin", "/usr/bin/git", "path to git binary")
 	fs.Usage = func() {
 		fmt.Fprintln(os.Stderr, `usage: orbit serve [options]
 
@@ -82,6 +84,13 @@ The options are:
 	if fs.NArg() != 0 {
 		fs.Usage()
 	}
+
+	git.SetConfig(git.Config{
+		ProjectRoot: *gitProjectsRoot,
+		GitBinPath:  *gitBin,
+		UploadPack:  true,
+		ReceivePack: true,
+	})
 
 	datastore.Connect()
 

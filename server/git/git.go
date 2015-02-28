@@ -23,3 +23,9 @@ type handlerReq struct {
 	Dir  string
 	File string
 }
+
+var config Config
+
+func SetConfig(config Config) {
+	config = config
+}
