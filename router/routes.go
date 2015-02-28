@@ -12,4 +12,7 @@ const (
 	GetLooseObject        = "get-loose-object"
 	GetPackFile           = "get-pack-file"
 	GetIdxFile            = "get-idx-file"
+
+	Project       = "project"
+	CreateProject = "project:create"
 )
