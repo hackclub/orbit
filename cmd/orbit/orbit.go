@@ -234,7 +234,7 @@ Create a new service for the current project on Orbit.
 			return &orbit.Service{
 				Type:        serviceType,
 				ProjectID:   projectID,
-				PortExposed: 3000,
+				PortExposed: "3000",
 			}
 		}
 		return nil

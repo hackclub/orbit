@@ -12,7 +12,8 @@ func init() {
 		`ALTER TABLE service
 		ADD CONSTRAINT service_productid_fkey
 		FOREIGN KEY (projectid)
-		REFERENCES project ON DELETE CASCADE`)
+		REFERENCES project ON DELETE CASCADE;`,
+		`CREATE UNIQUE INDEX service_containerid ON service(containerid);`)
 }
 
 type servicesStore struct{ *Datastore }

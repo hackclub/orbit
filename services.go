@@ -10,8 +10,9 @@ import (
 type Service struct {
 	ID          int
 	ProjectID   int
+	ContainerID string
 	Type        string
-	PortExposed int64
+	PortExposed string
 }
 
 type ServicesService interface {
