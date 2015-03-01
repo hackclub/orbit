@@ -87,7 +87,7 @@ var subcmds = []subcmd{
 
 func daemonCmd(args []string) {
 	fs := flag.NewFlagSet("daemon", flag.ExitOnError)
-	rateLimit := fs.Float64("q", 1, "rate limit in seconds (0 to disable)")
+	rateLimit := fs.Float64("q", 0, "rate limit in seconds (0 to disable)")
 	fs.Usage = func() {
 		fmt.Fprintln(os.Stderr, `usage: orbit daemon [options]
 
@@ -104,6 +104,7 @@ The options are:
 		fs.Usage()
 	}
 
+	// TODO: Fix throttle
 	var throttle <-chan time.Time
 	if *rateLimit > 0 {
 		throttle = time.Tick(time.Duration(1e6/(*rateLimit)) * time.Microsecond)
