@@ -67,7 +67,7 @@ var subcmds = []subcmd{
 func serveCmd(args []string) {
 	fs := flag.NewFlagSet("serve", flag.ExitOnError)
 	httpAddr := fs.String("http", ":5000", "HTTP service address")
-	gitProjectsRoot := fs.String("git-root", "/tmp", "git projects root")
+	gitProjectsRoot := fs.String("git-root", ".", "git projects root")
 	gitBin := fs.String("git-bin", "/usr/bin/git", "path to git binary")
 	fs.Usage = func() {
 		fmt.Fprintln(os.Stderr, `usage: orbit-server serve [options]

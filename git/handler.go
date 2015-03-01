@@ -40,7 +40,6 @@ func Handler() http.HandlerFunc {
 				rpc := service.RPC
 				file := strings.Replace(r.URL.Path, m[1]+"/", "", 1)
 				dir, err := getGitDir(m[1])
-
 				if err != nil {
 					log.Print(err)
 					renderNotFound(w)

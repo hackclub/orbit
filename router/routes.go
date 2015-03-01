@@ -15,4 +15,5 @@ const (
 
 	Project       = "project"
 	CreateProject = "project:create"
+	UpdateProject = "project:update"
 )

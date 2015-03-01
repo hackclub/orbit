@@ -1,7 +1,15 @@
 // Adapted from https://code.csdn.net/flycutter/git-http-backend
 package git
 
-import "net/http"
+import (
+	"fmt"
+	"net/http"
+	"os"
+
+	"code.google.com/p/go-uuid/uuid"
+
+	"github.com/zachlatta/orbit"
+)
 
 type Service struct {
 	Method  string
@@ -26,6 +34,19 @@ type handlerReq struct {
 
 var config Config
 
-func SetConfig(config Config) {
-	config = config
+func SetConfig(c Config) {
+	config = c
+}
+
+func InitializeProject(project *orbit.Project) (projectPath string, err error) {
+	projectPath = uuid.NewRandom().String()
+	path := fmt.Sprintf("%s/%s", config.ProjectRoot, projectPath)
+
+	if err := os.MkdirAll(path, 0744); err != nil {
+		return "", err
+	}
+
+	gitCommand(path, "init", "--bare")
+
+	return projectPath, err
 }

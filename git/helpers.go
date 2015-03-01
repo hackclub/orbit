@@ -34,19 +34,7 @@ func sendFile(contentType string, hr handlerReq) {
 }
 
 func getGitDir(filePath string) (string, error) {
-	root := config.ProjectRoot
-
-	if root == "" {
-		cwd, err := os.Getwd()
-		if err != nil {
-			log.Print(err)
-			return "", err
-		}
-
-		root = cwd
-	}
-
-	f := path.Join(root, filePath)
+	f := path.Join(config.ProjectRoot, filePath)
 	if _, err := os.Stat(f); os.IsNotExist(err) {
 		return "", err
 	}
@@ -112,6 +100,7 @@ func gitCommand(dir string, args ...string) []byte {
 	out, err := command.Output()
 
 	if err != nil {
+		// TODO: Properly handle error
 		log.Print(err)
 	}
 

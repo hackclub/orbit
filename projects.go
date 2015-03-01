@@ -12,6 +12,7 @@ type Project struct {
 type ProjectsService interface {
 	Get(id int) (*Project, error)
 	Create(project *Project) error
+	Update(project *Project) error
 }
 
 var (
@@ -27,5 +28,9 @@ func (s *projectsService) Get(id int) (*Project, error) {
 }
 
 func (s *projectsService) Create(project *Project) error {
+	return nil
+}
+
+func (s *projectsService) Update(project *Project) error {
 	return nil
 }

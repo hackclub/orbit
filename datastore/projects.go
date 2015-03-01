@@ -29,3 +29,10 @@ func (s *projectsStore) Create(project *orbit.Project) error {
 	}
 	return nil
 }
+
+func (s *projectsStore) Update(project *orbit.Project) error {
+	if _, err := s.dbh.Update(project); err != nil {
+		return err
+	}
+	return nil
+}
