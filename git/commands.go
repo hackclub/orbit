@@ -7,6 +7,10 @@ import (
 	"log"
 	"net/http"
 	"os/exec"
+	"strconv"
+	"strings"
+
+	"github.com/zachlatta/orbit/docker"
 )
 
 func serviceRPC(hr handlerReq) {
@@ -44,6 +48,20 @@ func serviceRPC(hr handlerReq) {
 	in.Write(input)
 	io.Copy(w, stdout)
 	cmd.Wait()
+
+	if hr.RPC == "receive-pack" {
+		split := strings.Split(hr.Dir, "/")
+		projectID, err := strconv.Atoi(split[len(split)-1])
+		if err != nil {
+			log.Print(err)
+			return
+		}
+
+		if err := docker.UpdateProjectFilesInServicesForProject(projectID); err != nil {
+			log.Print(err)
+			return
+		}
+	}
 }
 
 func getInfoRefs(hr handlerReq) {

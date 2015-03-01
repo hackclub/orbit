@@ -5,11 +5,18 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 
 	"github.com/zachlatta/orbit/api"
 	"github.com/zachlatta/orbit/datastore"
+	"github.com/zachlatta/orbit/docker"
 	"github.com/zachlatta/orbit/git"
+)
+
+var (
+	baseURLStr = flag.String("url", "http://mew.hackedu.us:4000", "base URL of orbit")
+	baseURL    *url.URL
 )
 
 func init() {
@@ -27,7 +34,10 @@ The commands are:
 		}
 		fmt.Fprintln(os.Stderr, `
 Use "orbit-server command -h" for more information about a command.
+
+The options are:
 `)
+		flag.PrintDefaults()
 		os.Exit(1)
 	}
 }
@@ -39,6 +49,13 @@ func main() {
 		flag.Usage()
 	}
 	log.SetFlags(0)
+
+	var err error
+	baseURL, err = url.Parse(*baseURLStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	docker.BaseURL = baseURL
 
 	subcmd := flag.Arg(0)
 	for _, c := range subcmds {

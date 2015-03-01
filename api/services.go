@@ -24,6 +24,20 @@ func serveService(w http.ResponseWriter, r *http.Request) error {
 	return writeJSON(w, service)
 }
 
+func serveServices(w http.ResponseWriter, r *http.Request) error {
+	projectID, err := strconv.Atoi(mux.Vars(r)["ProjectID"])
+	if err != nil {
+		return err
+	}
+
+	service, err := store.Services.List(projectID)
+	if err != nil {
+		return err
+	}
+
+	return writeJSON(w, service)
+}
+
 func serveCreateService(w http.ResponseWriter, r *http.Request) error {
 	var service orbit.Service
 	if err := json.NewDecoder(r.Body).Decode(&service); err != nil {
@@ -32,7 +46,7 @@ func serveCreateService(w http.ResponseWriter, r *http.Request) error {
 
 	var err error
 	service.ContainerID, service.HostPort, err =
-		docker.RunContainer(service.Type, service.PortExposed)
+		docker.RunContainer(service.ProjectID, service.Type, service.PortExposed)
 	if err != nil {
 		return err
 	}

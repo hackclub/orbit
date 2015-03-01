@@ -237,6 +237,18 @@ Create a new service for the current project on Orbit.
 				ProjectID:   projectID,
 				PortExposed: "3000",
 			}
+		case "node":
+			return &orbit.Service{
+				Type:        serviceType,
+				ProjectID:   projectID,
+				PortExposed: "3000",
+			}
+		case "tpires/neo4j":
+			return &orbit.Service{
+				Type:        serviceType,
+				ProjectID:   projectID,
+				PortExposed: "7474",
+			}
 		}
 		return nil
 	}()

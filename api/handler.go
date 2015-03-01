@@ -23,6 +23,7 @@ func Handler() *mux.Router {
 	m.Get(router.UpdateProject).Handler(handler(serveUpdateProject))
 
 	m.Get(router.Service).Handler(handler(serveService))
+	m.Get(router.Services).Handler(handler(serveServices))
 	m.Get(router.CreateService).Handler(handler(serveCreateService))
 	return m
 }

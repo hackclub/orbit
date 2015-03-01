@@ -29,6 +29,17 @@ func (s *servicesStore) Get(id int) (*orbit.Service, error) {
 	return &service, nil
 }
 
+func (s *servicesStore) List(projectID int) ([]*orbit.Service, error) {
+	var services []*orbit.Service
+	if err := s.dbh.Select(&services, `SELECT * FROM service WHERE projectid=$1`, projectID); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, orbit.ErrServiceNotFound
+		}
+		return nil, err
+	}
+	return services, nil
+}
+
 func (s *servicesStore) Create(service *orbit.Service) error {
 	if err := s.dbh.Insert(service); err != nil {
 		return err

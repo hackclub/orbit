@@ -22,6 +22,7 @@ type Service struct {
 
 type ServicesService interface {
 	Get(id int) (*Service, error)
+	List(projectID int) ([]*Service, error)
 	Create(service *Service) error
 }
 
@@ -51,6 +52,26 @@ func (s *servicesService) Get(id int) (*Service, error) {
 	}
 
 	return service, nil
+}
+
+func (s *servicesService) List(projectID int) ([]*Service, error) {
+	url, err := s.client.url(router.Services, map[string]string{"ProjectID": strconv.Itoa(projectID)}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var services []*Service
+	_, err = s.client.Do(req, &services)
+	if err != nil {
+		return nil, err
+	}
+
+	return services, nil
 }
 
 func (s *servicesService) Create(service *Service) error {
