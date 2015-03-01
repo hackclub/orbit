@@ -1,6 +1,11 @@
 package orbit
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+
+	"github.com/zachlatta/orbit/router"
+)
 
 type Project struct {
 	ID int
@@ -24,13 +29,57 @@ type projectsService struct {
 }
 
 func (s *projectsService) Get(id int) (*Project, error) {
-	return nil, nil
+	url, err := s.client.url(router.Project, map[string]string{"ID": strconv.Itoa(id)}, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := s.client.NewRequest("GET", url.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	var project *Project
+	_, err = s.client.Do(req, &project)
+	if err != nil {
+		return nil, err
+	}
+
+	return project, nil
 }
 
 func (s *projectsService) Create(project *Project) error {
+	url, err := s.client.url(router.CreateProject, nil, nil)
+	if err != nil {
+		return err
+	}
+
+	req, err := s.client.NewRequest("POST", url.String(), project)
+	if err != nil {
+		return err
+	}
+
+	if _, err = s.client.Do(req, &project); err != nil {
+		return err
+	}
+
 	return nil
 }
 
 func (s *projectsService) Update(project *Project) error {
+	url, err := s.client.url(router.UpdateProject, nil, nil)
+	if err != nil {
+		return err
+	}
+
+	req, err := s.client.NewRequest("PUT", url.String(), project)
+	if err != nil {
+		return err
+	}
+
+	if _, err := s.client.Do(req, &project); err != nil {
+		return err
+	}
+
 	return nil
 }

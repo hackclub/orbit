@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 
+	"github.com/zachlatta/orbit"
 	"gopkg.in/fsnotify.v1"
 )
 
@@ -59,6 +60,7 @@ type subcmd struct {
 
 var subcmds = []subcmd{
 	{"daemon", "start the orbit daemon", daemonCmd},
+	{"create-project", "create a new project", createProjectCmd},
 }
 
 func daemonCmd(args []string) {
@@ -122,4 +124,15 @@ func commitAndPushEverything() error {
 	}
 
 	return nil
+}
+
+func createProjectCmd(args []string) {
+	client := orbit.NewClient(nil)
+
+	var project orbit.Project
+	if err := client.Projects.Create(&project); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(project)
 }

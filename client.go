@@ -8,12 +8,10 @@ import (
 	"net/http"
 	"net/url"
 	"reflect"
-
-	"github.com/google/go-querystring/query"
-
 	"strings"
 
-	"sourcegraph.com/sourcegraph/thesrc/router"
+	"github.com/google/go-querystring/query"
+	"github.com/zachlatta/orbit/router"
 )
 
 type Client struct {
