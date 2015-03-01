@@ -16,4 +16,7 @@ const (
 	Project       = "project"
 	CreateProject = "project:create"
 	UpdateProject = "project:update"
+
+	Service       = "service"
+	CreateService = "service:create"
 )

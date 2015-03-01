@@ -3,10 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
 	"os/exec"
+	"strconv"
 	"time"
 
 	"github.com/zachlatta/orbit"
@@ -80,6 +82,7 @@ type subcmd struct {
 var subcmds = []subcmd{
 	{"daemon", "start the orbit daemon", daemonCmd},
 	{"create-project", "create a new project", createProjectCmd},
+	{"create-service", "create a new service", createServiceCmd},
 }
 
 func daemonCmd(args []string) {
@@ -181,5 +184,69 @@ Create a new project on Orbit.
 		log.Fatal(err)
 	}
 
+	if err := ioutil.WriteFile(
+		fmt.Sprintf("%s/.orbitrc", projectName),
+		[]byte(strconv.Itoa(project.ID)),
+		0644,
+	); err != nil {
+		log.Fatal(err)
+	}
+
 	fmt.Printf("%s created successfully\n", projectName)
+}
+
+func createServiceCmd(args []string) {
+	fs := flag.NewFlagSet("create-service", flag.ExitOnError)
+	fs.Usage = func() {
+		fmt.Fprintln(os.Stderr, `usage: orbit create-service [service type] [options]
+
+Create a new service for the current project on Orbit.
+`)
+		os.Exit(1)
+	}
+	fs.Parse(args)
+
+	if fs.NArg() != 1 {
+		fs.Usage()
+	}
+
+	serviceType := fs.Args()[0]
+
+	orbitrc, err := ioutil.ReadFile(".orbitrc")
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Fprintln(os.Stderr, "You must be in an orbit project to create a service.")
+			os.Exit(1)
+		}
+
+		log.Fatal(err)
+	}
+
+	projectID, err := strconv.Atoi(string(orbitrc))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, ".orbitrc is corrupted. Please fix it and try again.")
+		os.Exit(1)
+	}
+
+	service := func() *orbit.Service {
+		switch serviceType {
+		case "rails":
+			return &orbit.Service{
+				Type:        serviceType,
+				ProjectID:   projectID,
+				PortExposed: 3000,
+			}
+		}
+		return nil
+	}()
+	if service == nil {
+		fmt.Fprintf(os.Stderr, "%s is not a valid project type.\n", serviceType)
+		os.Exit(1)
+	}
+
+	if err := apiClient.Services.Create(service); err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%s service created successfully\n", serviceType)
 }

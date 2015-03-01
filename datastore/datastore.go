@@ -7,6 +7,7 @@ import (
 
 type Datastore struct {
 	Projects orbit.ProjectsService
+	Services orbit.ServicesService
 
 	dbh modl.SqlExecutor
 }
@@ -18,5 +19,6 @@ func NewDatastore(dbh modl.SqlExecutor) *Datastore {
 
 	d := &Datastore{dbh: dbh}
 	d.Projects = &projectsStore{d}
+	d.Services = &servicesStore{d}
 	return d
 }

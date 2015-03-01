@@ -19,6 +19,7 @@ type Client struct {
 	UserAgent string
 
 	Projects ProjectsService
+	Services ServicesService
 
 	httpClient *http.Client
 }
@@ -39,6 +40,7 @@ func NewClient(httpClient *http.Client) *Client {
 		httpClient: httpClient,
 	}
 	c.Projects = &projectsService{c}
+	c.Services = &servicesService{c}
 	return c
 }
 
