@@ -5,8 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
-	"code.google.com/p/go-uuid/uuid"
+	"strconv"
 
 	"github.com/zachlatta/orbit"
 )
@@ -39,8 +38,8 @@ func SetConfig(c Config) {
 }
 
 func InitializeProject(project *orbit.Project) (projectPath string, err error) {
-	projectPath = uuid.NewRandom().String()
-	path := fmt.Sprintf("%s/%s", config.ProjectRoot, projectPath)
+	projectPath = strconv.Itoa(project.ID)
+	path := fmt.Sprintf("%s/%d", config.ProjectRoot, project.ID)
 
 	if err := os.MkdirAll(path, 0744); err != nil {
 		return "", err
