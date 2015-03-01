@@ -32,7 +32,7 @@ func serveCreateService(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	var err error
-	service.ContainerID, err = runContainer(service.Type, service.PortExposed)
+	service.ContainerID, service.HostPort, err = runContainer(service.Type, service.PortExposed)
 	if err != nil {
 		return err
 	}
@@ -45,16 +45,35 @@ func serveCreateService(w http.ResponseWriter, r *http.Request) error {
 	return writeJSON(w, service)
 }
 
-func runContainer(image, port string) (containerID string, err error) {
-	cmd := exec.Command("docker", "run",
+func runContainer(image, port string) (containerID, hostPort string, err error) {
+	output, err := exec.Command("docker", "run",
 		"-d",
 		"-p", port,
 		image,
 		"/bin/sh", "-c", "while true; do sleep 1; done",
-	)
-	output, err := cmd.Output()
+	).Output()
 	if err != nil {
-		return "", err
+		return "", "", err
 	}
-	return strings.TrimSpace(string(output)), nil
+	containerID = strings.TrimSpace(string(output))
+
+	output, err = exec.Command("docker", "inspect", containerID).Output()
+	if err != nil {
+		return "", "", err
+	}
+
+	var inspectOutput []struct {
+		NetworkSettings struct {
+			Ports map[string][]struct {
+				HostPort string
+			}
+		}
+	}
+	if err := json.Unmarshal(output, &inspectOutput); err != nil {
+		return "", "", err
+	}
+
+	hostPort = inspectOutput[0].NetworkSettings.Ports[port+"/tcp"][0].HostPort
+
+	return containerID, hostPort, nil
 }

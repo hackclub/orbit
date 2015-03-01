@@ -12,7 +12,12 @@ type Service struct {
 	ProjectID   int
 	ContainerID string
 	Type        string
+
+	// The port exposed from the local Docker container to the host.
 	PortExposed string
+
+	// The port on the host that PortExposed corresponds to.
+	HostPort string
 }
 
 type ServicesService interface {
