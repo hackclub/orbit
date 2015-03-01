@@ -7,6 +7,11 @@ import (
 	"github.com/zachlatta/orbit/router"
 )
 
+type ProjectCmd struct {
+	ContainerType string
+	Command       []string
+}
+
 type Project struct {
 	ID int
 

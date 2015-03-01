@@ -1,14 +1,19 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"net/url"
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/zachlatta/orbit"
@@ -83,6 +88,7 @@ var subcmds = []subcmd{
 	{"daemon", "start the orbit daemon", daemonCmd},
 	{"create-project", "create a new project", createProjectCmd},
 	{"create-service", "create a new service", createServiceCmd},
+	{"run", "run command in current prject", runCommandCmd},
 }
 
 func daemonCmd(args []string) {
@@ -262,4 +268,62 @@ Create a new service for the current project on Orbit.
 	}
 
 	fmt.Printf("%s service created successfully\n", serviceType)
+}
+
+func runCommandCmd(args []string) {
+	fs := flag.NewFlagSet("run", flag.ExitOnError)
+	fs.Usage = func() {
+		fmt.Fprintln(os.Stderr, `usage: orbit run [container type] [command] [options]
+
+Run a command in the current project on Orbit.
+`)
+		os.Exit(1)
+	}
+	fs.Parse(args)
+
+	if fs.NArg() < 2 {
+		fs.Usage()
+	}
+
+	orbitrc, err := ioutil.ReadFile(".orbitrc")
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Fprintln(os.Stderr, "You must be in an orbit project to create a service.")
+			os.Exit(1)
+		}
+
+		log.Fatal(err)
+	}
+
+	projectID, err := strconv.Atoi(strings.TrimSpace(string(orbitrc)))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, ".orbitrc is corrupted. Please fix it and try again.")
+		os.Exit(1)
+	}
+
+	cmd := orbit.ProjectCmd{
+		ContainerType: fs.Args()[0],
+		Command:       fs.Args()[1:],
+	}
+
+	buf := new(bytes.Buffer)
+	if err := json.NewEncoder(buf).Encode(cmd); err != nil {
+		log.Fatal(err)
+	}
+
+	u := apiClient.BaseURL.ResolveReference(&url.URL{
+		Path: fmt.Sprintf("/api/projects/%d/run_command", projectID),
+	})
+	resp, err := http.Post(u.String(), "application/json", buf)
+	if err != nil {
+		log.Fatal("error running command: could not make http request")
+	}
+
+	defer resp.Body.Close()
+	io.Copy(os.Stdout, resp.Body)
+
+	if output, err := exec.Command("git", "pull").Output(); err != nil {
+		fmt.Println(string(output))
+		log.Fatal("error pulling file changes from command:", err)
+	}
 }

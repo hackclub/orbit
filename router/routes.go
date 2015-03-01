@@ -13,9 +13,10 @@ const (
 	GetPackFile           = "get-pack-file"
 	GetIdxFile            = "get-idx-file"
 
-	Project       = "project"
-	CreateProject = "project:create"
-	UpdateProject = "project:update"
+	Project           = "project"
+	CreateProject     = "project:create"
+	UpdateProject     = "project:update"
+	RunProjectCommand = "project:runcommand"
 
 	Service       = "service"
 	Services      = "services"

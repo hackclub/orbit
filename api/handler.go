@@ -18,13 +18,14 @@ var (
 
 func Handler() *mux.Router {
 	m := router.API()
-	m.Get(router.Project).Handler(handler(serveProject))
-	m.Get(router.CreateProject).Handler(handler(serveCreateProject))
-	m.Get(router.UpdateProject).Handler(handler(serveUpdateProject))
-
 	m.Get(router.Service).Handler(handler(serveService))
 	m.Get(router.Services).Handler(handler(serveServices))
 	m.Get(router.CreateService).Handler(handler(serveCreateService))
+
+	m.Get(router.Project).Handler(handler(serveProject))
+	m.Get(router.CreateProject).Handler(handler(serveCreateProject))
+	m.Get(router.UpdateProject).Handler(handler(serveUpdateProject))
+	m.Get(router.RunProjectCommand).Handler(handler(serveProjectCommand))
 	return m
 }
 

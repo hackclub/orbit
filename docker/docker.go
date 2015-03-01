@@ -16,6 +16,13 @@ var (
 	BaseURL *url.URL
 )
 
+func CommandInContainer(containerID string, command ...string) *exec.Cmd {
+	return exec.Command("docker", "exec",
+		containerID,
+		"/bin/sh", "-c", "cd /usr/src/app && "+strings.Join(command, " "),
+	)
+}
+
 func UpdateProjectFilesInServicesForProject(projectID int) error {
 	services, err := Store.Services.List(projectID)
 	if err != nil {
