@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"os"
 	"os/exec"
+	"time"
 
 	"github.com/zachlatta/orbit"
 	"gopkg.in/fsnotify.v1"
@@ -83,6 +84,7 @@ var subcmds = []subcmd{
 
 func daemonCmd(args []string) {
 	fs := flag.NewFlagSet("daemon", flag.ExitOnError)
+	rateLimit := fs.Float64("q", 1, "rate limit in seconds (0 to disable)")
 	fs.Usage = func() {
 		fmt.Fprintln(os.Stderr, `usage: orbit daemon [options]
 
@@ -99,6 +101,11 @@ The options are:
 		fs.Usage()
 	}
 
+	var throttle <-chan time.Time
+	if *rateLimit > 0 {
+		throttle = time.Tick(time.Duration(1e6/(*rateLimit)) * time.Microsecond)
+	}
+
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
@@ -108,6 +115,10 @@ The options are:
 	done := make(chan bool)
 	go func() {
 		for {
+			if *rateLimit > 0 {
+				<-throttle
+			}
+
 			select {
 			case e := <-watcher.Events:
 				if e.Op&fsnotify.Write == fsnotify.Write {
