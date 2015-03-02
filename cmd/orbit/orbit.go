@@ -89,6 +89,7 @@ var subcmds = []subcmd{
 	{"create-project", "create a new project", createProjectCmd},
 	{"create-service", "create a new service", createServiceCmd},
 	{"run", "run command in current prject", runCommandCmd},
+	{"open", "open a project in your browser", openCmd},
 }
 
 func daemonCmd(args []string) {
@@ -325,5 +326,62 @@ Run a command in the current project on Orbit.
 	if output, err := exec.Command("git", "pull").Output(); err != nil {
 		fmt.Println(string(output))
 		log.Fatal("error pulling file changes from command:", err)
+	}
+}
+
+func openCmd(args []string) {
+	fs := flag.NewFlagSet("open", flag.ExitOnError)
+	fs.Usage = func() {
+		fmt.Fprintln(os.Stderr, `usage: orbit open [service] [options]
+
+Opens the provided service in the browser.
+`)
+		os.Exit(1)
+	}
+	fs.Parse(args)
+
+	if fs.NArg() != 1 {
+		fs.Usage()
+	}
+
+	serviceType := fs.Args()[0]
+
+	orbitrc, err := ioutil.ReadFile(".orbitrc")
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Fprintln(os.Stderr, "You must be in an Orbit project to run this.")
+			os.Exit(1)
+		}
+
+		log.Fatal(err)
+	}
+
+	projectID, err := strconv.Atoi(string(orbitrc))
+	if err != nil {
+		fmt.Fprintln(os.Stderr, ".orbitrc is corrupted. Please fix it and try again.")
+		os.Exit(1)
+	}
+
+	services, err := apiClient.Services.List(projectID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	service := func() *orbit.Service {
+		for _, service := range services {
+			if service.Type == serviceType {
+				return service
+			}
+		}
+		return nil
+	}()
+	if service == nil {
+		fmt.Fprintf(os.Stderr, "the %s service does not exist for this project", serviceType)
+		os.Exit(1)
+	}
+
+	cmd := exec.Command("open", fmt.Sprintf("http://mewtwo.hackedu.us:%s", service.HostPort))
+	if err := cmd.Run(); err != nil {
+		log.Fatal("error opening project in browser:", err)
 	}
 }
