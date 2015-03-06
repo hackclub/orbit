@@ -7,9 +7,9 @@ import (
 	"strconv"
 
 	"github.com/gorilla/mux"
-	"github.com/zachlatta/orbit"
-	"github.com/zachlatta/orbit/docker"
-	"github.com/zachlatta/orbit/git"
+	"github.com/hackedu/orbit"
+	"github.com/hackedu/orbit/docker"
+	"github.com/hackedu/orbit/git"
 )
 
 func serveProject(w http.ResponseWriter, r *http.Request) error {

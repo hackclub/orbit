@@ -7,8 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/schema"
-	"github.com/zachlatta/orbit/datastore"
-	"github.com/zachlatta/orbit/router"
+	"github.com/hackedu/orbit/datastore"
+	"github.com/hackedu/orbit/router"
 )
 
 var (

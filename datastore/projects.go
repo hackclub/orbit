@@ -3,7 +3,7 @@ package datastore
 import (
 	"database/sql"
 
-	"github.com/zachlatta/orbit"
+	"github.com/hackedu/orbit"
 )
 
 func init() {

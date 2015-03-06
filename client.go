@@ -11,7 +11,7 @@ import (
 	"strings"
 
 	"github.com/google/go-querystring/query"
-	"github.com/zachlatta/orbit/router"
+	"github.com/hackedu/orbit/router"
 )
 
 type Client struct {

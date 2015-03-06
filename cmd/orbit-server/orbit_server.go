@@ -8,10 +8,10 @@ import (
 	"net/url"
 	"os"
 
-	"github.com/zachlatta/orbit/api"
-	"github.com/zachlatta/orbit/datastore"
-	"github.com/zachlatta/orbit/docker"
-	"github.com/zachlatta/orbit/git"
+	"github.com/hackedu/orbit/api"
+	"github.com/hackedu/orbit/datastore"
+	"github.com/hackedu/orbit/docker"
+	"github.com/hackedu/orbit/git"
 )
 
 var (

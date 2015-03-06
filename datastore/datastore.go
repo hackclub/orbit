@@ -2,7 +2,7 @@ package datastore
 
 import (
 	"github.com/jmoiron/modl"
-	"github.com/zachlatta/orbit"
+	"github.com/hackedu/orbit"
 )
 
 type Datastore struct {
