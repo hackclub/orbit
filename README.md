@@ -7,6 +7,49 @@ Orbit puts your development environment in the cloud.
 Created at the [LAUNCH Hackathon 2015](http://launch2015.challengepost.com/).
 Demo: http://youtu.be/MY01d647S9Y.
 
+## Getting Started
+
+### Prerequisites
+
+##### Client
+
+* Git
+
+##### Server
+
+* Docker (with the client binary)
+* Git
+
+### Installation
+
+Use the `orbit` or `orbit-server` command to interact with the app.
+
+    $ go get -u github.com/hackedu/orbit/...
+    $ orbit
+    $ orbit-server
+
+### Running
+
+##### Server
+
+First, set the `DATABASE_URL` environment variable to a valid Postgres database
+(ex: `postgres://orpheus:hunter4@orbit.hackedu.us:5432/orbit`).
+
+Then run these commands to create the DB and serve the backend API.
+
+    # migrate the db
+    $ orbit-server createdb
+    
+    # start the http server
+    $ orbit-server -url=http://0.0.0.0:5000 serve
+
+##### Client
+
+Make sure the client's base URL is set to what the server is serving on. Once
+the server is up and running, the client should be ready to go.
+
+    $ orbit -h
+
 ## License
 
 Copyright (C) 2015 hackEDU
